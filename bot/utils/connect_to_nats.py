@@ -10,14 +10,16 @@ from nats.js.api import (
     DiscardPolicy,
 )
 
+from bot.config import settings
+
 
 async def connect_to_nats(servers: str | list[str]) -> tuple[Client, JetStreamContext]:
     nc: Client = await nats.connect(servers=servers)
     js: JetStreamContext = nc.jetstream()
 
     stream_config = StreamConfig(
-        name="CurrenciesStream",
-        subjects=["currencies"],
+        name=settings.NATS_STREAM,
+        subjects=[settings.NATS_CONSUMER_SUBJECT],
         retention=RetentionPolicy.INTEREST,
         discard=DiscardPolicy.OLD,
         storage=StorageType.FILE,
